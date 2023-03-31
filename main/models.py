@@ -8,15 +8,29 @@ from django.contrib.auth.hashers import check_password,make_password
 from django.core.mail import send_mail
 import math
 # Create your models here.
+
 def generate_otp():
     nums='0123456789'
     otp_token=''
-    while len(otp_token)<6:
-        
-        otp_token+=random.choice(nums)
+    events=[]
+
+    if events != []:
+        events=PayedEvents.objects.all()
+
+    
+        for event in events:
+            if not check_password(otp_token,event.otp_code):
+                while len(otp_token)<6:
+
+            
+                    otp_token+=random.choice(nums)
+    else:
+        while len(otp_token)<6:
+
+            
+            otp_token+=random.choice(nums)
+
     return otp_token
-
-
 
 class Profile(models.Model):
     user=models.OneToOneField(User,null=True,blank=True,on_delete=models.CASCADE,unique=True)
@@ -126,6 +140,9 @@ class CartedEvent(models.Model):
     #     self.total= self.total_price
     #     super().save(*args,**kwargs)
 
+
+
+
     
 
 
@@ -141,18 +158,18 @@ class PayedEvents(models.Model):
     def save(self,*args,**kwargs):
         if self.paid==False:
             token=generate_otp()
-            otp_list=[event.otp_code for event in list(PayedEvents.objects.all())]
-            print(otp_list)
+            # otp_list=[event.otp_code for event in list(PayedEvents.objects.all())]
+            # print(otp_list)
             
-            if not check_password(token,otp_list):
-                self.otp_code=make_password(token)
-                send_mail(
-                    'Bida payment otp',
-                    f'your otp code is {token}',
-                    'from Bida@gmail.com',
-                    [self.user.email],
-                    
-                    )
+            
+            self.otp_code=make_password(token)
+            send_mail(
+                'Bida payment otp',
+                f'your otp code is {token}',
+                'from Bida@gmail.com',
+                [self.user.email],
+                
+                )
 
 
         super().save(*args,**kwargs)

@@ -158,7 +158,7 @@ class SelectPackageForEvent(APIView):
 
 
         try:
-            event=Events.objects.get(id=event_id,user=request.user)
+            event=Events.objects.get(id=event_id,user=request.user,paid=False)
         except ObjectDoesNotExist:
             return Response({
                 'message':'user event don\'t exist',
