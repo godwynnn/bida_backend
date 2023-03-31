@@ -4,3 +4,6 @@ from .models import *
 
 
 admin.site.register(Events)
+admin.site.register(Packages)
+admin.site.register(PayedEvents)
+admin.site.register(CartedEvent)
